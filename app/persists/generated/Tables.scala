@@ -57,22 +57,25 @@ trait Tables {
   lazy val PlayEvolutions = new TableQuery(tag => new PlayEvolutions(tag))
 
   /** Entity class storing rows of table Version
-   *  @param appVersion Database column app_version SqlType(varchar), PrimaryKey, Length(10,true)
+   *  @param id Database column id SqlType(serial), AutoInc, PrimaryKey
+   *  @param appVersion Database column app_version SqlType(varchar), Length(10,true)
    *  @param createdAt Database column created_at SqlType(timestamptz) */
-  case class VersionRow(appVersion: String, createdAt: Option[java.sql.Timestamp])
+  case class VersionRow(id: Int, appVersion: String, createdAt: Option[java.sql.Timestamp])
   /** GetResult implicit for fetching VersionRow objects using plain SQL queries */
-  implicit def GetResultVersionRow(implicit e0: GR[String], e1: GR[Option[java.sql.Timestamp]]): GR[VersionRow] = GR{
+  implicit def GetResultVersionRow(implicit e0: GR[Int], e1: GR[String], e2: GR[Option[java.sql.Timestamp]]): GR[VersionRow] = GR{
     prs => import prs._
-    VersionRow.tupled((<<[String], <<?[java.sql.Timestamp]))
+    VersionRow.tupled((<<[Int], <<[String], <<?[java.sql.Timestamp]))
   }
   /** Table description of table version. Objects of this class serve as prototypes for rows in queries. */
   class Version(_tableTag: Tag) extends profile.api.Table[VersionRow](_tableTag, "version") {
-    def * = (appVersion, createdAt) <> (VersionRow.tupled, VersionRow.unapply)
+    def * = (id, appVersion, createdAt) <> (VersionRow.tupled, VersionRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = ((Rep.Some(appVersion), createdAt)).shaped.<>({r=>import r._; _1.map(_=> VersionRow.tupled((_1.get, _2)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = ((Rep.Some(id), Rep.Some(appVersion), createdAt)).shaped.<>({r=>import r._; _1.map(_=> VersionRow.tupled((_1.get, _2.get, _3)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
 
-    /** Database column app_version SqlType(varchar), PrimaryKey, Length(10,true) */
-    val appVersion: Rep[String] = column[String]("app_version", O.PrimaryKey, O.Length(10,varying=true))
+    /** Database column id SqlType(serial), AutoInc, PrimaryKey */
+    val id: Rep[Int] = column[Int]("id", O.AutoInc, O.PrimaryKey)
+    /** Database column app_version SqlType(varchar), Length(10,true) */
+    val appVersion: Rep[String] = column[String]("app_version", O.Length(10,varying=true))
     /** Database column created_at SqlType(timestamptz) */
     val createdAt: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_at")
   }
