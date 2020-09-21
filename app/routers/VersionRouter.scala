@@ -10,6 +10,7 @@ class VersionRouter @Inject() (
   versionController: VersionController
 ) extends SimpleRouter {
   override def routes: Routes = {
-    case GET(p"/") => versionController.get
+    case GET(p"/")  => versionController.get
+    case POST(p"/") => versionController.post
   }
 }

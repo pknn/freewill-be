@@ -18,4 +18,10 @@ class VersionPersist @Inject() (
     val latestVersion = Version.sortBy(_.id * -1)
     db.run(latestVersion.result.head)
   }
+
+  def create(version: String): Future[Int] = {
+    val fields = Version.map(version => (version.appVersion))
+
+    db.run(fields += (version))
+  }
 }

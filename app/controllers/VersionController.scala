@@ -4,10 +4,12 @@ import com.google.inject.{Inject, Singleton}
 import play.api.mvc.ControllerComponents
 import play.api.mvc.BaseController
 import play.api.mvc._
+import scala.concurrent.Future
+import scala.concurrent.ExecutionContext
 import useCases.VersionUseCase
 import presenters.VersionPresenter
-import scala.concurrent.ExecutionContext
 import commons.ApiResults
+import bodies.CreateVersionBody
 
 @Singleton()
 class VersionController @Inject() (
@@ -21,5 +23,13 @@ class VersionController @Inject() (
       val versionPresenter = version.map(VersionPresenter.apply)
 
       ApiResults.resultAsync(versionPresenter)
+    }
+
+  def post: Action[CreateVersionBody] =
+    Action.async(parse.json[CreateVersionBody]) { request =>
+      val body: CreateVersionBody = request.body
+      versionUseCase.addVersion(body.appVersion)
+
+      ApiResults.resultAsync(Future("Success"))
     }
 }

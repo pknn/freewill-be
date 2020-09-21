@@ -13,4 +13,10 @@ class VersionUseCase @Inject() (
     val version = versionPersist.getLatestVersion
     version.map(Version.apply)
   }
+
+  def addVersion(version: String): Future[Unit] = {
+    versionPersist.create(version)
+
+    Future(())
+  }
 }
