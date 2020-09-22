@@ -22,6 +22,7 @@ class VersionPersist @Inject() (
   def create(version: String): Future[Int] = {
     val fields = Version.map(version => (version.appVersion))
 
-    db.run(fields += (version))
+    db.run(fields += version)
   }
+
 }

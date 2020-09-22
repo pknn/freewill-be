@@ -13,4 +13,5 @@ class VersionRouter @Inject() (
     case GET(p"/")  => versionController.get
     case POST(p"/") => versionController.post
   }
+
 }

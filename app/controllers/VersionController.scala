@@ -32,4 +32,5 @@ class VersionController @Inject() (
 
       ApiResults.resultAsync(Future("Success"))
     }
+
 }

@@ -73,3 +73,5 @@ generatePersist := {
     .failed foreach (sys error _.getMessage)
   println("Persists Layer Generated")
 }
+
+dockerUsername := Some("pknndev")

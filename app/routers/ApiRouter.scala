@@ -10,12 +10,12 @@ class ApiRouter @Inject() (
   apiController: ApiController,
   versionRouter: VersionRouter
 ) extends SimpleRouter {
-  override def routes: Routes = {
+  override def routes: Routes =
     versionRouter
       .withPrefix("/version")
       .routes
       .orElse {
         case GET(p"/") => apiController.index
       }
-  }
+
 }

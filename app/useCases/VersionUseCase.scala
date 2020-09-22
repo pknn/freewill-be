@@ -19,4 +19,5 @@ class VersionUseCase @Inject() (
 
     Future(())
   }
+
 }

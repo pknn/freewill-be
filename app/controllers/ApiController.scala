@@ -1,6 +1,6 @@
 package controllers
 
-import com.google.inject.{Singleton, Inject}
+import com.google.inject.{Inject, Singleton}
 import play.api.mvc._
 import commons.ApiResults
 
@@ -12,4 +12,5 @@ class ApiController @Inject() (
     Action {
       ApiResults.json("Hello")
     }
+
 }
