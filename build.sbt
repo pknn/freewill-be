@@ -76,5 +76,4 @@ generatePersist := {
   println("Persists Layer Generated")
 }
 
-packageName in Docker := sys.props("repoName") + "-" + sys.props("env")
 dockerUsername := Some(sys.props("dockerUsername"))
