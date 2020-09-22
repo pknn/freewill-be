@@ -20,6 +20,7 @@ libraryDependencies += "com.github.tminglei" %% "slick-pg" % "0.19.2"
 
 lazy val cleanPersist =
   taskKey[Unit]("Clean Persist Layer generated with generatePersist")
+
 cleanPersist := {
   val dir = (scalaSource in Compile) value
 
@@ -33,6 +34,7 @@ cleanPersist := {
 
 lazy val generatePersist =
   taskKey[Unit]("Generate Persist Layer with slick-codegen")
+
 generatePersist := {
   val slickDriver = "slick.jdbc.PostgresProfile"
   val jdbcDriver = "org.postgresql.Driver"
@@ -74,4 +76,5 @@ generatePersist := {
   println("Persists Layer Generated")
 }
 
-dockerUsername := Some("pknndev")
+packageName in Docker := sys.props("repoName") + "-" + sys.props("env")
+dockerUsername := sys.props("dockerUsername")

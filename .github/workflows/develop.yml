@@ -19,3 +19,7 @@ jobs:
           java-version: 1.8
       - name: Publish to Dockerhub
         run: sbt docker:publish
+        env:
+          repoName: $GITHUB_REPOSITORY
+          env: develop
+          dockerUsername: ${{ secrets.DOCKERHUB_USERNAME }}
