@@ -77,4 +77,4 @@ generatePersist := {
 }
 
 packageName in Docker := sys.props("repoName") + "-" + sys.props("env")
-dockerUsername := sys.props("dockerUsername")
+dockerUsername := Some(sys.props("dockerUsername"))
