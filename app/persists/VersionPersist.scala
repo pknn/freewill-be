@@ -14,9 +14,9 @@ class VersionPersist @Inject() (
   protected val dbConfigProvider: DatabaseConfigProvider
 )(implicit ec: ExecutionContext)
     extends HasDatabaseConfigProvider[JdbcProfile] {
-  def getLatestVersion: Future[VersionRow] = {
+  def getLatestVersion: Future[Option[VersionRow]] = {
     val latestVersion = Version.sortBy(_.id * -1)
-    db.run(latestVersion.result.head)
+    db.run(latestVersion.result.headOption)
   }
 
   def create(version: String): Future[Int] = {
