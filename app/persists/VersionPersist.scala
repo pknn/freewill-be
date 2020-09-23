@@ -12,15 +12,18 @@ import persists.generated.Tables.VersionRow
 @Singleton()
 class VersionPersist @Inject() (protected val dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext)
     extends HasDatabaseConfigProvider[JdbcProfile] {
-  def getLatestVersion: Future[Option[VersionRow]] = {
-    val latestVersion = Version.sortBy(_.id * -1)
-    db.run(latestVersion.result.headOption)
-  }
+  def getLatestVersion: Future[Option[VersionRow]] =
+    db run {
+      Version
+        .sortBy(_.id * -1)
+        .result
+        .headOption
+    }
 
-  def create(version: String): Future[Int] = {
-    val fields = Version.map(version => (version.appVersion))
-
-    db.run(fields += version)
-  }
+  def create(version: String): Future[Int] =
+    db run {
+      Version
+        .map(version => (version.appVersion)) += version
+    }
 
 }
