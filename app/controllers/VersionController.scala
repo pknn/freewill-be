@@ -22,15 +22,15 @@ class VersionController @Inject() (
       val version = versionUseCase.getLatestVersion
       val versionPresenter = version.map(VersionPresenter.apply)
 
-      ApiResults.resultAsync(versionPresenter)
+      ApiResults.async(versionPresenter)
     }
 
   def post: Action[CreateVersionBody] =
     Action.async(parse.json[CreateVersionBody]) { request =>
       val body: CreateVersionBody = request.body
-      versionUseCase.addVersion(body.appVersion)
+      val result: Future[Unit] = versionUseCase.addVersion(body.appVersion)
 
-      ApiResults.resultAsync(Future("Success"))
+      ApiResults.async(result.map(_ => "Success"))
     }
 
 }
