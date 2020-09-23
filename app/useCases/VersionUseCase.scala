@@ -1,6 +1,6 @@
 package useCases
 
-import com.google.inject.{Singleton, Inject}
+import com.google.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 import persists.VersionPersist
 import models.Version
@@ -14,10 +14,7 @@ class VersionUseCase @Inject() (
     version.map(Version.apply)
   }
 
-  def addVersion(version: String): Future[Unit] = {
-    versionPersist.create(version)
-
-    Future(())
-  }
+  def addVersion(version: String): Future[Unit] =
+    versionPersist.create(version).map(_ => ())
 
 }

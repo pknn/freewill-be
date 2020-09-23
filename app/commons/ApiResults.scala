@@ -11,7 +11,7 @@ object ApiResults {
   def json[C](content: C)(implicit writes: Writes[C]): Result =
     Ok(successResultJsonContent(content))
 
-  def resultAsync[C](futureContent: Future[C])(implicit
+  def async[C](futureContent: Future[C])(implicit
     writes: Writes[C],
     ec: ExecutionContext
   ): Future[Result] =

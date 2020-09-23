@@ -1,6 +1,6 @@
 package persists
 
-import com.google.inject.{Singleton, Inject}
+import com.google.inject.{Inject, Singleton}
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.db.slick.HasDatabaseConfigProvider
 import slick.jdbc.JdbcProfile
