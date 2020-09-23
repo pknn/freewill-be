@@ -25,7 +25,7 @@ object ApiResults {
   private def successResultJsonContent[C](
     content: C
   )(implicit writes: Writes[C]): JsValue =
-    Json.obj("result" -> Json.toJson(content))
+    Json.toJson(content)
 
   private def failResultJsonContent(throwable: Throwable): JsValue =
     Json.obj("message" -> throwable.toString)
