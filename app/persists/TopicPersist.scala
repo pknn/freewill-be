@@ -22,6 +22,13 @@ class TopicPersist @Inject() (
         .result
     }
 
+  def create(title: String, description: Option[String], score: Int) =
+    db run {
+      Topics.map(row =>
+        (row.title, row.description, row.score)
+      ) += (title, description, score)
+    }
+
 }
 
 case class TopicFilter(topicId: Option[String])

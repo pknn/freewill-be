@@ -6,6 +6,7 @@ import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 import models.Topic
 import persists.TopicFilter
+import bodies.CreateTopicBody
 
 @Singleton()
 class TopicUseCase @Inject() (
@@ -17,6 +18,16 @@ class TopicUseCase @Inject() (
 
     topicRows
       .map(_.map(Topic.apply))
+  }
+
+  def createTopic(topicBody: CreateTopicBody): Future[Unit] = {
+    val result = topicPersist.create(
+      topicBody.title,
+      topicBody.description,
+      topicBody.score
+    )
+
+    result.map(_ => ())
   }
 
 }

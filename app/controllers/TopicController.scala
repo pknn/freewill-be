@@ -9,6 +9,7 @@ import play.api.mvc.AnyContent
 import useCases.TopicUseCase
 import presenters.TopicPresenter
 import commons.ApiResults
+import bodies.CreateTopicBody
 
 @Singleton()
 class TopicController @Inject() (
@@ -22,6 +23,14 @@ class TopicController @Inject() (
       val topicPresenters = topics.map(_.map(TopicPresenter.apply))
 
       ApiResults.async(topicPresenters)
+    }
+
+  def create: Action[CreateTopicBody] =
+    Action.async(parse.json[CreateTopicBody]) { request =>
+      val body: CreateTopicBody = request.body
+      val result = topicUseCase.createTopic(body)
+
+      ApiResults.async(result.map(_ => "Success"))
     }
 
 }

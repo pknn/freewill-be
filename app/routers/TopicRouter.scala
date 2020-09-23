@@ -13,6 +13,7 @@ class TopicRouter @Inject() (
   def routes: Routes = {
     case GET(p"/" ? q_?"topic_id=$topicId") =>
       topicController.get(topicId = topicId)
+    case POST(p"/")                         => topicController.create
   }
 
 }
