@@ -114,19 +114,19 @@ trait Tables {
     title: String,
     description: Option[String] = None,
     score: Int = 0,
-    createdAt: Option[java.sql.Timestamp])
+    createdAt: java.sql.Timestamp)
 
   /** GetResult implicit for fetching TopicsRow objects using plain SQL queries */
   implicit def GetResultTopicsRow(
     implicit e0: GR[String],
     e1: GR[Option[String]],
     e2: GR[Int],
-    e3: GR[Option[java.sql.Timestamp]]
+    e3: GR[java.sql.Timestamp]
   ): GR[TopicsRow] =
     GR {
       prs =>
         import prs._
-        TopicsRow.tupled((<<[String], <<[String], <<?[String], <<[Int], <<?[java.sql.Timestamp]))
+        TopicsRow.tupled((<<[String], <<[String], <<?[String], <<[Int], <<[java.sql.Timestamp]))
     }
 
   /** Table description of table topics. Objects of this class serve as prototypes for rows in queries. */
@@ -135,8 +135,8 @@ trait Tables {
 
     /** Maps whole row to an option. Useful for outer joins. */
     def ? =
-      ((Rep.Some(id), Rep.Some(title), description, Rep.Some(score), createdAt)).shaped.<>(
-        { r => import r._; _1.map(_ => TopicsRow.tupled((_1.get, _2.get, _3, _4.get, _5))) },
+      ((Rep.Some(id), Rep.Some(title), description, Rep.Some(score), Rep.Some(createdAt))).shaped.<>(
+        { r => import r._; _1.map(_ => TopicsRow.tupled((_1.get, _2.get, _3, _4.get, _5.get))) },
         (_: Any) => throw new Exception("Inserting into ? projection not supported.")
       )
 
@@ -153,7 +153,7 @@ trait Tables {
     val score: Rep[Int] = column[Int]("score", O.Default(0))
 
     /** Database column created_at SqlType(timestamptz) */
-    val createdAt: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_at")
+    val createdAt: Rep[java.sql.Timestamp] = column[java.sql.Timestamp]("created_at")
   }
 
   /** Collection-like TableQuery object for table Topics */

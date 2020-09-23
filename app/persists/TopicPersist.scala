@@ -1,4 +1,4 @@
-package persists.generated
+package persists
 
 import com.google.inject.{Inject, Singleton}
 import play.api.db.slick.DatabaseConfigProvider
@@ -11,7 +11,7 @@ import scala.concurrent.Future
 import persists.generated.Tables.TopicsRow
 
 @Singleton()
-class TopicPersist(
+class TopicPersist @Inject() (
   protected val dbConfigProvider: DatabaseConfigProvider
 )(implicit ec: ExecutionContext)
     extends HasDatabaseConfigProvider[JdbcProfile] {

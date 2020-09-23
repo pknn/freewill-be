@@ -7,7 +7,7 @@ create table topics
   title varchar(100) not null,
   description text,
   score integer check (score >= 0 and score <= 10) not null default 0,
-  created_at timestamptz default current_timestamp
+  created_at timestamptz not null default current_timestamp
 )
 
 -- !Downs
