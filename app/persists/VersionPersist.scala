@@ -10,9 +10,7 @@ import persists.generated.Tables.Version
 import persists.generated.Tables.VersionRow
 
 @Singleton()
-class VersionPersist @Inject() (
-  protected val dbConfigProvider: DatabaseConfigProvider
-)(implicit ec: ExecutionContext)
+class VersionPersist @Inject() (protected val dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext)
     extends HasDatabaseConfigProvider[JdbcProfile] {
   def getLatestVersion: Future[Option[VersionRow]] = {
     val latestVersion = Version.sortBy(_.id * -1)

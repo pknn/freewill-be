@@ -5,8 +5,8 @@ sealed abstract class VersionException(
   message: String = "Version Error",
   cause: Throwable = null,
   errorMessageKey: String = "",
-  errorMessageParams: Seq[String] = Seq.empty
-) extends ExpectedException(
+  errorMessageParams: Seq[String] = Seq.empty)
+    extends ExpectedException(
       code,
       message,
       cause,
