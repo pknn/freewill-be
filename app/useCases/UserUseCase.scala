@@ -1,7 +1,7 @@
 package useCases
 
 import com.google.inject.{Inject, Singleton}
-import models.User
+import models.{User, UserForm}
 import persists.{UserFilter, UserPersist}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -17,6 +17,12 @@ class UserUseCase @Inject() (userPersist: UserPersist)(implicit ec: ExecutionCon
     val result = userPersist.find(filter)
 
     result.map(_.map(User.apply))
+  }
+
+  def createUser(userForm: UserForm): Future[Unit] = {
+    val result = userPersist.create(userForm.username, userForm.email, userForm.encryptedPassword)
+
+    result.map(_ => ())
   }
 
 }

@@ -8,7 +8,8 @@ import play.api.routing.sird.{GET, _}
 
 class UserRouter @Inject() (userController: UserController) extends SimpleRouter {
   def routes: Routes = {
-    case GET(p"/") => userController.get
+    case GET(p"/")  => userController.get
+    case POST(p"/") => userController.create
   }
 
 }

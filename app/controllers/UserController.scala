@@ -1,7 +1,9 @@
 package controllers
 
+import bodies.UserBody
 import com.google.inject.{Inject, Singleton}
 import commons.ApiResults
+import models.UserForm
 import play.api.mvc.{Action, AnyContent, BaseController, ControllerComponents}
 import presenters.UserPresenter
 import useCases.UserUseCase
@@ -20,6 +22,15 @@ class UserController @Inject() (
       val usersPresenters = users.map(_.map(UserPresenter.apply))
 
       ApiResults.async(usersPresenters)
+    }
+
+  def create: Action[UserBody] =
+    Action.async(parse.json[UserBody]) { request =>
+      val body = request.body
+      val userForm = UserForm(body)
+      val result = userUseCase.createUser(userForm)
+
+      ApiResults.async(result.map(_ => "Success"))
     }
 
 }

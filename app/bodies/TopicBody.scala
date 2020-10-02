@@ -13,5 +13,4 @@ case class TopicBody(
 object TopicBody {
   implicit val jsonConfig: JsonConfiguration = JsonConfiguration(SnakeCase)
   implicit val jsonFormat: Format[TopicBody] = Json.format[TopicBody]
-
 }
