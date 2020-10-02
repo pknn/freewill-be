@@ -134,6 +134,11 @@ trait Tables {
     val updatedAt: Rep[java.sql.Timestamp] = column[java.sql.Timestamp]("updated_at")
     /** Database column deleted_at SqlType(timestamptz), Default(None) */
     val deletedAt: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("deleted_at", O.Default(None))
+
+    /** Uniqueness Index over (email) (database name users_email_key) */
+    val index1 = index("users_email_key", email, unique=true)
+    /** Uniqueness Index over (username) (database name users_username_key) */
+    val index2 = index("users_username_key", username, unique=true)
   }
   /** Collection-like TableQuery object for table Users */
   lazy val Users = new TableQuery(tag => new Users(tag))
