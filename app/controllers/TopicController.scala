@@ -19,9 +19,9 @@ class TopicController @Inject() (
   topicUseCase: TopicUseCase
 )(implicit ec: ExecutionContext)
     extends BaseController {
-  def get(topicId: Option[String]): Action[AnyContent] =
+  def get(topicId: Option[String], userId: Option[String]): Action[AnyContent] =
     Action.async {
-      val topics = topicUseCase.findTopics(topicId)
+      val topics = topicUseCase.findTopics(topicId, userId)
       val topicPresenters = topics.map(_.map(TopicPresenter.apply))
 
       ApiResults.async(topicPresenters)

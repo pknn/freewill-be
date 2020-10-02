@@ -2,16 +2,15 @@ package useCases
 
 import com.google.inject.{Inject, Singleton}
 import models.{Topic, TopicForm}
-import persists.generated.Tables
-import persists.{TopicFilter, TopicPersist}
+import persists.{CompleteTopicRow, TopicFilter, TopicPersist}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton()
 class TopicUseCase @Inject() (topicPersist: TopicPersist)(implicit ec: ExecutionContext) {
-  def findTopics(maybeTopicId: Option[String]): Future[Seq[Topic]] = {
-    val filter: TopicFilter = TopicFilter(topicId = maybeTopicId)
-    val topicRows: Future[Seq[Tables.TopicsRow]] = topicPersist.find(filter)
+  def findTopics(maybeTopicId: Option[String], maybeUserId: Option[String]): Future[Seq[Topic]] = {
+    val filter: TopicFilter = TopicFilter(topicId = maybeTopicId, userId = maybeUserId)
+    val topicRows: Future[Seq[CompleteTopicRow]] = topicPersist.find(filter)
 
     topicRows
       .map(_.map(Topic.apply))

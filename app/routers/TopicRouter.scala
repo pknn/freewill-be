@@ -8,10 +8,11 @@ import play.api.routing.sird._
 
 class TopicRouter @Inject() (topicController: TopicController) extends SimpleRouter {
   def routes: Routes = {
-    case GET(p"/" ? q_?"topic_id=$topicId") => topicController.get(topicId = topicId)
-    case POST(p"/")                         => topicController.create
-    case PUT(p"/$topicId")                  => topicController.update(topicId)
-    case DELETE(p"/$topicId")               => topicController.delete(topicId)
+    case GET(p"/" ? q_?"topic_id=$topicId" ? q_?"user_id=$userId") =>
+      topicController.get(topicId = topicId, userId = userId)
+    case POST(p"/")                                                => topicController.create
+    case PUT(p"/$topicId")                                         => topicController.update(topicId)
+    case DELETE(p"/$topicId")                                      => topicController.delete(topicId)
   }
 
 }
