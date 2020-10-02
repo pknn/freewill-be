@@ -11,6 +11,7 @@ class TopicRouter @Inject() (topicController: TopicController) extends SimpleRou
     case GET(p"/" ? q_?"topic_id=$topicId") => topicController.get(topicId = topicId)
     case POST(p"/")                         => topicController.create
     case PUT(p"/$topicId")                  => topicController.update(topicId)
+    case DELETE(p"/$topicId")               => topicController.delete(topicId)
   }
 
 }

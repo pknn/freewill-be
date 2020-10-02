@@ -16,6 +16,7 @@ class TopicPersist @Inject() (protected val dbConfigProvider: DatabaseConfigProv
   def find(filter: TopicFilter): Future[Seq[TopicsRow]] =
     db.run {
       Topics
+        .filter(_.deletedAt.isEmpty)
         .filterOpt(filter.topicId)(_.id === _)
         .result
     }
@@ -38,6 +39,12 @@ class TopicPersist @Inject() (protected val dbConfigProvider: DatabaseConfigProv
     db.run {
       val updatingFields = Topics.filter(_.id === id).map(row => (row.title, row.description, row.score, row.updatedAt))
       updatingFields.update((title, description, score, new Timestamp(System.currentTimeMillis)))
+    }
+
+  def delete(id: String): Future[Int] =
+    db.run {
+      val updatingField = Topics.filter(_.id === id).map(_.deletedAt)
+      updatingField.update(Some(new Timestamp(System.currentTimeMillis())))
     }
 
 }

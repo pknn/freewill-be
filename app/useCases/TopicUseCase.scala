@@ -33,4 +33,10 @@ class TopicUseCase @Inject() (topicPersist: TopicPersist)(implicit ec: Execution
     result.map(_ => ())
   }
 
+  def deleteTopic(id: String): Future[Unit] = {
+    val result = topicPersist.delete(id)
+
+    result.map(_ => ())
+  }
+
 }

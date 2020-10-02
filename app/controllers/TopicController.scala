@@ -45,4 +45,11 @@ class TopicController @Inject() (
       ApiResults.async(result.map(_ => "Success"))
     }
 
+  def delete(topicId: String): Action[AnyContent] =
+    Action.async {
+      val result = topicUseCase.deleteTopic(topicId)
+
+      ApiResults.async(result.map(_ => "Success"))
+    }
+
 }
