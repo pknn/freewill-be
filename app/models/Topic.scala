@@ -1,6 +1,8 @@
 package models
 
 import java.sql.Timestamp
+
+import bodies.TopicBody
 import persists.generated.Tables.TopicsRow
 
 case class Topic(
@@ -8,7 +10,8 @@ case class Topic(
   title: String,
   maybeDescription: Option[String],
   score: Int,
-  createdAt: Timestamp)
+  createdAt: Timestamp,
+  updatedAt: Timestamp)
 
 object Topic {
   def apply(topicRow: TopicsRow): Topic =
@@ -17,7 +20,19 @@ object Topic {
       title = topicRow.title,
       maybeDescription = topicRow.description,
       score = topicRow.score,
-      createdAt = topicRow.createdAt
+      createdAt = topicRow.createdAt,
+      updatedAt = topicRow.updatedAt
     )
+
+}
+
+case class TopicForm(
+  title: String,
+  maybeDescription: Option[String],
+  score: Int)
+
+object TopicForm {
+  def apply(topicBody: TopicBody): TopicForm =
+    TopicForm(title = topicBody.title, maybeDescription = topicBody.description, score = topicBody.score)
 
 }

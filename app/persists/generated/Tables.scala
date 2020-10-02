@@ -61,18 +61,20 @@ trait Tables {
    *  @param title Database column title SqlType(varchar), Length(100,true)
    *  @param description Database column description SqlType(text), Default(None)
    *  @param score Database column score SqlType(int4), Default(0)
-   *  @param createdAt Database column created_at SqlType(timestamptz) */
-  case class TopicsRow(id: String, title: String, description: Option[String] = None, score: Int = 0, createdAt: java.sql.Timestamp)
+   *  @param createdAt Database column created_at SqlType(timestamptz)
+   *  @param updatedAt Database column updated_at SqlType(timestamptz)
+   *  @param deletedAt Database column deleted_at SqlType(timestamptz), Default(None) */
+  case class TopicsRow(id: String, title: String, description: Option[String] = None, score: Int = 0, createdAt: java.sql.Timestamp, updatedAt: java.sql.Timestamp, deletedAt: Option[java.sql.Timestamp] = None)
   /** GetResult implicit for fetching TopicsRow objects using plain SQL queries */
-  implicit def GetResultTopicsRow(implicit e0: GR[String], e1: GR[Option[String]], e2: GR[Int], e3: GR[java.sql.Timestamp]): GR[TopicsRow] = GR{
+  implicit def GetResultTopicsRow(implicit e0: GR[String], e1: GR[Option[String]], e2: GR[Int], e3: GR[java.sql.Timestamp], e4: GR[Option[java.sql.Timestamp]]): GR[TopicsRow] = GR{
     prs => import prs._
-    TopicsRow.tupled((<<[String], <<[String], <<?[String], <<[Int], <<[java.sql.Timestamp]))
+    TopicsRow.tupled((<<[String], <<[String], <<?[String], <<[Int], <<[java.sql.Timestamp], <<[java.sql.Timestamp], <<?[java.sql.Timestamp]))
   }
   /** Table description of table topics. Objects of this class serve as prototypes for rows in queries. */
   class Topics(_tableTag: Tag) extends profile.api.Table[TopicsRow](_tableTag, "topics") {
-    def * = (id, title, description, score, createdAt) <> (TopicsRow.tupled, TopicsRow.unapply)
+    def * = (id, title, description, score, createdAt, updatedAt, deletedAt) <> (TopicsRow.tupled, TopicsRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = ((Rep.Some(id), Rep.Some(title), description, Rep.Some(score), Rep.Some(createdAt))).shaped.<>({r=>import r._; _1.map(_=> TopicsRow.tupled((_1.get, _2.get, _3, _4.get, _5.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = ((Rep.Some(id), Rep.Some(title), description, Rep.Some(score), Rep.Some(createdAt), Rep.Some(updatedAt), deletedAt)).shaped.<>({r=>import r._; _1.map(_=> TopicsRow.tupled((_1.get, _2.get, _3, _4.get, _5.get, _6.get, _7)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
 
     /** Database column id SqlType(varchar), PrimaryKey, Length(50,true) */
     val id: Rep[String] = column[String]("id", O.PrimaryKey, O.Length(50,varying=true))
@@ -84,6 +86,10 @@ trait Tables {
     val score: Rep[Int] = column[Int]("score", O.Default(0))
     /** Database column created_at SqlType(timestamptz) */
     val createdAt: Rep[java.sql.Timestamp] = column[java.sql.Timestamp]("created_at")
+    /** Database column updated_at SqlType(timestamptz) */
+    val updatedAt: Rep[java.sql.Timestamp] = column[java.sql.Timestamp]("updated_at")
+    /** Database column deleted_at SqlType(timestamptz), Default(None) */
+    val deletedAt: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("deleted_at", O.Default(None))
   }
   /** Collection-like TableQuery object for table Topics */
   lazy val Topics = new TableQuery(tag => new Topics(tag))
@@ -111,8 +117,8 @@ trait Tables {
     /** Database column created_at SqlType(timestamptz) */
     val createdAt: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_at")
 
-    /** Uniqueness Index over (appVersion) (database name version_unique) */
-    val index1 = index("version_unique", appVersion, unique=true)
+    /** Uniqueness Index over (appVersion) (database name version_app_version_key) */
+    val index1 = index("version_app_version_key", appVersion, unique=true)
   }
   /** Collection-like TableQuery object for table Version */
   lazy val Version = new TableQuery(tag => new Version(tag))

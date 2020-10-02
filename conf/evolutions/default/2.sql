@@ -1,12 +1,16 @@
--- Version Unique Contraint
+-- Topic Schema
 
 -- !Ups
-alter table version add constraint version_unique unique (app_version);
-insert into version
-  (app_version)
-values
-  ('1.0.0');
+create table topics
+(
+  id varchar(50) primary key default uuid_generate_v4(),
+  title varchar(100) not null,
+  description text,
+  score integer check (score >= 0 and score <= 10) not null default 0,
+  created_at timestamptz not null default current_timestamp,
+  updated_at timestamptz not null default current_timestamp,
+  deleted_at timestamptz
+);
 
 -- !Downs
-alter table version drop constraint version_unique;
-delete from version where version.app_version = '1.0.0';
+drop table topics;
