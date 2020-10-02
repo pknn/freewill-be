@@ -14,7 +14,7 @@ trait Tables {
   import slick.jdbc.{GetResult => GR}
 
   /** DDL for all tables. Call .create to execute. */
-  lazy val schema: profile.SchemaDescription = PlayEvolutions.schema ++ Topics.schema ++ Version.schema
+  lazy val schema: profile.SchemaDescription = PlayEvolutions.schema ++ Topics.schema ++ Users.schema ++ Version.schema
   @deprecated("Use .schema instead of .ddl", "3.0")
   def ddl = schema
 
@@ -63,18 +63,19 @@ trait Tables {
    *  @param score Database column score SqlType(int4), Default(0)
    *  @param createdAt Database column created_at SqlType(timestamptz)
    *  @param updatedAt Database column updated_at SqlType(timestamptz)
-   *  @param deletedAt Database column deleted_at SqlType(timestamptz), Default(None) */
-  case class TopicsRow(id: String, title: String, description: Option[String] = None, score: Int = 0, createdAt: java.sql.Timestamp, updatedAt: java.sql.Timestamp, deletedAt: Option[java.sql.Timestamp] = None)
+   *  @param deletedAt Database column deleted_at SqlType(timestamptz), Default(None)
+   *  @param userId Database column user_id SqlType(varchar), Length(100,true), Default(None) */
+  case class TopicsRow(id: String, title: String, description: Option[String] = None, score: Int = 0, createdAt: java.sql.Timestamp, updatedAt: java.sql.Timestamp, deletedAt: Option[java.sql.Timestamp] = None, userId: Option[String] = None)
   /** GetResult implicit for fetching TopicsRow objects using plain SQL queries */
   implicit def GetResultTopicsRow(implicit e0: GR[String], e1: GR[Option[String]], e2: GR[Int], e3: GR[java.sql.Timestamp], e4: GR[Option[java.sql.Timestamp]]): GR[TopicsRow] = GR{
     prs => import prs._
-    TopicsRow.tupled((<<[String], <<[String], <<?[String], <<[Int], <<[java.sql.Timestamp], <<[java.sql.Timestamp], <<?[java.sql.Timestamp]))
+    TopicsRow.tupled((<<[String], <<[String], <<?[String], <<[Int], <<[java.sql.Timestamp], <<[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[String]))
   }
   /** Table description of table topics. Objects of this class serve as prototypes for rows in queries. */
   class Topics(_tableTag: Tag) extends profile.api.Table[TopicsRow](_tableTag, "topics") {
-    def * = (id, title, description, score, createdAt, updatedAt, deletedAt) <> (TopicsRow.tupled, TopicsRow.unapply)
+    def * = (id, title, description, score, createdAt, updatedAt, deletedAt, userId) <> (TopicsRow.tupled, TopicsRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = ((Rep.Some(id), Rep.Some(title), description, Rep.Some(score), Rep.Some(createdAt), Rep.Some(updatedAt), deletedAt)).shaped.<>({r=>import r._; _1.map(_=> TopicsRow.tupled((_1.get, _2.get, _3, _4.get, _5.get, _6.get, _7)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = ((Rep.Some(id), Rep.Some(title), description, Rep.Some(score), Rep.Some(createdAt), Rep.Some(updatedAt), deletedAt, userId)).shaped.<>({r=>import r._; _1.map(_=> TopicsRow.tupled((_1.get, _2.get, _3, _4.get, _5.get, _6.get, _7, _8)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
 
     /** Database column id SqlType(varchar), PrimaryKey, Length(50,true) */
     val id: Rep[String] = column[String]("id", O.PrimaryKey, O.Length(50,varying=true))
@@ -90,9 +91,55 @@ trait Tables {
     val updatedAt: Rep[java.sql.Timestamp] = column[java.sql.Timestamp]("updated_at")
     /** Database column deleted_at SqlType(timestamptz), Default(None) */
     val deletedAt: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("deleted_at", O.Default(None))
+    /** Database column user_id SqlType(varchar), Length(100,true), Default(None) */
+    val userId: Rep[Option[String]] = column[Option[String]]("user_id", O.Length(100,varying=true), O.Default(None))
+
+    /** Foreign key referencing Users (database name topics_user_id_fkey) */
+    lazy val usersFk = foreignKey("topics_user_id_fkey", userId, Users)(r => Rep.Some(r.id), onUpdate=ForeignKeyAction.NoAction, onDelete=ForeignKeyAction.SetNull)
   }
   /** Collection-like TableQuery object for table Topics */
   lazy val Topics = new TableQuery(tag => new Topics(tag))
+
+  /** Entity class storing rows of table Users
+   *  @param id Database column id SqlType(varchar), PrimaryKey
+   *  @param firstName Database column first_name SqlType(varchar), Length(100,true)
+   *  @param lastName Database column last_name SqlType(varchar), Length(100,true)
+   *  @param userName Database column user_name SqlType(varchar), Length(50,true)
+   *  @param email Database column email SqlType(varchar), Length(100,true)
+   *  @param createdAt Database column created_at SqlType(timestamptz)
+   *  @param updatedAt Database column updated_at SqlType(timestamptz)
+   *  @param deletedAt Database column deleted_at SqlType(timestamptz), Default(None) */
+  case class UsersRow(id: String, firstName: String, lastName: String, userName: String, email: String, createdAt: java.sql.Timestamp, updatedAt: java.sql.Timestamp, deletedAt: Option[java.sql.Timestamp] = None)
+  /** GetResult implicit for fetching UsersRow objects using plain SQL queries */
+  implicit def GetResultUsersRow(implicit e0: GR[String], e1: GR[java.sql.Timestamp], e2: GR[Option[java.sql.Timestamp]]): GR[UsersRow] = GR{
+    prs => import prs._
+    UsersRow.tupled((<<[String], <<[String], <<[String], <<[String], <<[String], <<[java.sql.Timestamp], <<[java.sql.Timestamp], <<?[java.sql.Timestamp]))
+  }
+  /** Table description of table users. Objects of this class serve as prototypes for rows in queries. */
+  class Users(_tableTag: Tag) extends profile.api.Table[UsersRow](_tableTag, "users") {
+    def * = (id, firstName, lastName, userName, email, createdAt, updatedAt, deletedAt) <> (UsersRow.tupled, UsersRow.unapply)
+    /** Maps whole row to an option. Useful for outer joins. */
+    def ? = ((Rep.Some(id), Rep.Some(firstName), Rep.Some(lastName), Rep.Some(userName), Rep.Some(email), Rep.Some(createdAt), Rep.Some(updatedAt), deletedAt)).shaped.<>({r=>import r._; _1.map(_=> UsersRow.tupled((_1.get, _2.get, _3.get, _4.get, _5.get, _6.get, _7.get, _8)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+
+    /** Database column id SqlType(varchar), PrimaryKey */
+    val id: Rep[String] = column[String]("id", O.PrimaryKey)
+    /** Database column first_name SqlType(varchar), Length(100,true) */
+    val firstName: Rep[String] = column[String]("first_name", O.Length(100,varying=true))
+    /** Database column last_name SqlType(varchar), Length(100,true) */
+    val lastName: Rep[String] = column[String]("last_name", O.Length(100,varying=true))
+    /** Database column user_name SqlType(varchar), Length(50,true) */
+    val userName: Rep[String] = column[String]("user_name", O.Length(50,varying=true))
+    /** Database column email SqlType(varchar), Length(100,true) */
+    val email: Rep[String] = column[String]("email", O.Length(100,varying=true))
+    /** Database column created_at SqlType(timestamptz) */
+    val createdAt: Rep[java.sql.Timestamp] = column[java.sql.Timestamp]("created_at")
+    /** Database column updated_at SqlType(timestamptz) */
+    val updatedAt: Rep[java.sql.Timestamp] = column[java.sql.Timestamp]("updated_at")
+    /** Database column deleted_at SqlType(timestamptz), Default(None) */
+    val deletedAt: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("deleted_at", O.Default(None))
+  }
+  /** Collection-like TableQuery object for table Users */
+  lazy val Users = new TableQuery(tag => new Users(tag))
 
   /** Entity class storing rows of table Version
    *  @param id Database column id SqlType(serial), AutoInc, PrimaryKey
