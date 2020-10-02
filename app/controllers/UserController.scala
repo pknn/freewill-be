@@ -33,4 +33,20 @@ class UserController @Inject() (
       ApiResults.async(result.map(_ => "Success"))
     }
 
+  def edit(userId: String): Action[UserBody] =
+    Action.async(parse.json[UserBody]) { request =>
+      val body = request.body
+      val userForm = UserForm(body)
+      val result = userUseCase.editUser(userId, userForm)
+
+      ApiResults.async(result.map(_ => "Success"))
+    }
+
+  def delete(userId: String): Action[AnyContent] =
+    Action.async {
+      val result = userUseCase.deleteUser(userId)
+
+      ApiResults.async(result.map(_ => "Success"))
+    }
+
 }

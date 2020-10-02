@@ -25,4 +25,16 @@ class UserUseCase @Inject() (userPersist: UserPersist)(implicit ec: ExecutionCon
     result.map(_ => ())
   }
 
+  def editUser(userId: String, userForm: UserForm): Future[Unit] = {
+    val result = userPersist.edit(userId, userForm.username, userForm.email)
+
+    result.map(_ => ())
+  }
+
+  def deleteUser(userId: String): Future[Unit] = {
+    val result = userPersist.delete(userId)
+
+    result.map(_ => ())
+  }
+
 }

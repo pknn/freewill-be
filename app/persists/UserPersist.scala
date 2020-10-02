@@ -36,13 +36,11 @@ class UserPersist @Inject() (protected val dbConfigProvider: DatabaseConfigProvi
   def edit(
     id: String,
     username: String,
-    email: String,
-    encryptedPassword: String
+    email: String
   ): Future[Int] =
     db.run {
-      val updatingFields =
-        Users.filter(_.id === id).map(row => (row.username, row.email, row.encryptedPassword, row.updatedAt))
-      updatingFields.update((username, email, encryptedPassword, new Timestamp(System.currentTimeMillis())))
+      val updatingFields = Users.filter(_.id === id).map(row => (row.username, row.email, row.updatedAt))
+      updatingFields.update((username, email, new Timestamp(System.currentTimeMillis())))
     }
 
   def delete(id: String): Future[Int] =
