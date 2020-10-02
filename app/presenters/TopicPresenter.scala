@@ -11,12 +11,12 @@ import play.api.libs.json.JsValue
 import play.api.libs.json.JsSuccess
 import play.api.libs.json.JsString
 
-case class TopicPresenter(id: String,
-                          title: String,
-                          description: Option[String],
-                          score: Int,
-                          createdAt: String
-)
+case class TopicPresenter(
+  id: String,
+  title: String,
+  description: Option[String],
+  score: Int,
+  createdAt: String)
 
 object TopicPresenter {
   implicit val jsonConfig: JsonConfiguration = JsonConfiguration(SnakeCase)

@@ -9,9 +9,7 @@ import persists.TopicFilter
 import bodies.CreateTopicBody
 
 @Singleton()
-class TopicUseCase @Inject() (
-  topicPersist: TopicPersist
-)(implicit ec: ExecutionContext) {
+class TopicUseCase @Inject() (topicPersist: TopicPersist)(implicit ec: ExecutionContext) {
   def findTopics(maybeTopicId: Option[String]): Future[Seq[Topic]] = {
     val filter = TopicFilter(topicId = maybeTopicId)
     val topicRows = topicPersist.find(filter)

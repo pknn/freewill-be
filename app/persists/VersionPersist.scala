@@ -13,7 +13,7 @@ import persists.generated.Tables.VersionRow
 class VersionPersist @Inject() (protected val dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext)
     extends HasDatabaseConfigProvider[JdbcProfile] {
   def getLatestVersion: Future[Option[VersionRow]] =
-    db run {
+    db.run {
       Version
         .sortBy(_.id * -1)
         .result
@@ -21,7 +21,7 @@ class VersionPersist @Inject() (protected val dbConfigProvider: DatabaseConfigPr
     }
 
   def create(version: String): Future[Int] =
-    db run {
+    db.run {
       Version
         .map(version => (version.appVersion)) += version
     }

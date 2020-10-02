@@ -9,8 +9,8 @@ import play.api.routing.sird._
 class ApiRouter @Inject() (
   apiController: ApiController,
   versionRouter: VersionRouter,
-  topicRouter: TopicRouter
-) extends SimpleRouter {
+  topicRouter: TopicRouter)
+    extends SimpleRouter {
   override def routes: Routes =
     versionRouter
       .withPrefix("/version")
