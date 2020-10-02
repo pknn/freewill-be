@@ -20,22 +20,17 @@ class ErrorHandler @Inject() (
   sourceMapper: OptionalSourceMapper,
   router: Provider[Router],
   langs: Langs,
-  messagesApi: MessagesApi
-) extends JsonHttpErrorHandler(env, sourceMapper) {
-  private val defaultLang =
-    langs.availables.head
+  messagesApi: MessagesApi)
+    extends JsonHttpErrorHandler(env, sourceMapper) {
+  private val defaultLang = langs.availables.head
 
-  override def onServerError(
-    request: RequestHeader,
-    exception: Throwable
-  ): Future[Result] = {
+  override def onServerError(request: RequestHeader, exception: Throwable): Future[Result] = {
     val lang = request.acceptLanguages.filter(langs.availables.contains) match {
       case Nil       => defaultLang
       case head :: _ => head
     }
 
-    implicit val messagesProvider: MessagesProvider =
-      MessagesImpl(lang, messagesApi)
+    implicit val messagesProvider: MessagesProvider = MessagesImpl(lang, messagesApi)
 
     exception match {
       case e: ExpectedException    =>
@@ -60,8 +55,7 @@ class ErrorHandler @Inject() (
             Json.toJson(failResponse)
           )
         }
-      case _                       =>
-        super.onServerError(request, exception)
+      case _                       => super.onServerError(request, exception)
     }
   }
 
