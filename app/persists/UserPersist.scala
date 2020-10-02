@@ -1,5 +1,7 @@
 package persists
 
+import java.sql.Timestamp
+
 import com.google.inject.{Inject, Singleton}
 import persists.generated.Tables
 import persists.generated.Tables.Users
@@ -16,13 +18,38 @@ class UserPersist @Inject() (protected val dbConfigProvider: DatabaseConfigProvi
     db.run {
       Users
         .filterOpt(filter.userId)(_.id === _)
-        .filterOpt(filter.userName)(_.userName === _)
+        .filterOpt(filter.userName)(_.username === _)
         .filterOpt(filter.userEmail)(_.email === _)
         .filter(_.deletedAt.isEmpty)
         .result
     }
 
-  def create(firstName: String, lastName: String, userName: String, email: String, )
+  def create(
+    username: String,
+    email: String,
+    encryptedPassword: String
+  ): Future[Int] =
+    db.run {
+      Users.map(row => (row.username, row.email, row.encryptedPassword)) += (username, email, encryptedPassword)
+    }
+
+  def edit(
+    id: String,
+    username: String,
+    email: String,
+    encryptedPassword: String
+  ): Future[Int] =
+    db.run {
+      val updatingFields =
+        Users.filter(_.id === id).map(row => (row.username, row.email, row.encryptedPassword, row.updatedAt))
+      updatingFields.update((username, email, encryptedPassword, new Timestamp(System.currentTimeMillis())))
+    }
+
+  def delete(id: String): Future[Int] =
+    db.run {
+      Users.filter(_.id === id).map(_.deletedAt).update(Some(new Timestamp(System.currentTimeMillis())))
+    }
+
 }
 
 case class UserFilter(

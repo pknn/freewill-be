@@ -102,35 +102,32 @@ trait Tables {
 
   /** Entity class storing rows of table Users
    *  @param id Database column id SqlType(varchar), PrimaryKey
-   *  @param firstName Database column first_name SqlType(varchar), Length(100,true)
-   *  @param lastName Database column last_name SqlType(varchar), Length(100,true)
-   *  @param userName Database column user_name SqlType(varchar), Length(50,true)
+   *  @param username Database column username SqlType(varchar), Length(50,true)
    *  @param email Database column email SqlType(varchar), Length(100,true)
+   *  @param encryptedPassword Database column encrypted_password SqlType(varchar), Length(255,true)
    *  @param createdAt Database column created_at SqlType(timestamptz)
    *  @param updatedAt Database column updated_at SqlType(timestamptz)
    *  @param deletedAt Database column deleted_at SqlType(timestamptz), Default(None) */
-  case class UsersRow(id: String, firstName: String, lastName: String, userName: String, email: String, createdAt: java.sql.Timestamp, updatedAt: java.sql.Timestamp, deletedAt: Option[java.sql.Timestamp] = None)
+  case class UsersRow(id: String, username: String, email: String, encryptedPassword: String, createdAt: java.sql.Timestamp, updatedAt: java.sql.Timestamp, deletedAt: Option[java.sql.Timestamp] = None)
   /** GetResult implicit for fetching UsersRow objects using plain SQL queries */
   implicit def GetResultUsersRow(implicit e0: GR[String], e1: GR[java.sql.Timestamp], e2: GR[Option[java.sql.Timestamp]]): GR[UsersRow] = GR{
     prs => import prs._
-    UsersRow.tupled((<<[String], <<[String], <<[String], <<[String], <<[String], <<[java.sql.Timestamp], <<[java.sql.Timestamp], <<?[java.sql.Timestamp]))
+    UsersRow.tupled((<<[String], <<[String], <<[String], <<[String], <<[java.sql.Timestamp], <<[java.sql.Timestamp], <<?[java.sql.Timestamp]))
   }
   /** Table description of table users. Objects of this class serve as prototypes for rows in queries. */
   class Users(_tableTag: Tag) extends profile.api.Table[UsersRow](_tableTag, "users") {
-    def * = (id, firstName, lastName, userName, email, createdAt, updatedAt, deletedAt) <> (UsersRow.tupled, UsersRow.unapply)
+    def * = (id, username, email, encryptedPassword, createdAt, updatedAt, deletedAt) <> (UsersRow.tupled, UsersRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = ((Rep.Some(id), Rep.Some(firstName), Rep.Some(lastName), Rep.Some(userName), Rep.Some(email), Rep.Some(createdAt), Rep.Some(updatedAt), deletedAt)).shaped.<>({r=>import r._; _1.map(_=> UsersRow.tupled((_1.get, _2.get, _3.get, _4.get, _5.get, _6.get, _7.get, _8)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = ((Rep.Some(id), Rep.Some(username), Rep.Some(email), Rep.Some(encryptedPassword), Rep.Some(createdAt), Rep.Some(updatedAt), deletedAt)).shaped.<>({r=>import r._; _1.map(_=> UsersRow.tupled((_1.get, _2.get, _3.get, _4.get, _5.get, _6.get, _7)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
 
     /** Database column id SqlType(varchar), PrimaryKey */
     val id: Rep[String] = column[String]("id", O.PrimaryKey)
-    /** Database column first_name SqlType(varchar), Length(100,true) */
-    val firstName: Rep[String] = column[String]("first_name", O.Length(100,varying=true))
-    /** Database column last_name SqlType(varchar), Length(100,true) */
-    val lastName: Rep[String] = column[String]("last_name", O.Length(100,varying=true))
-    /** Database column user_name SqlType(varchar), Length(50,true) */
-    val userName: Rep[String] = column[String]("user_name", O.Length(50,varying=true))
+    /** Database column username SqlType(varchar), Length(50,true) */
+    val username: Rep[String] = column[String]("username", O.Length(50,varying=true))
     /** Database column email SqlType(varchar), Length(100,true) */
     val email: Rep[String] = column[String]("email", O.Length(100,varying=true))
+    /** Database column encrypted_password SqlType(varchar), Length(255,true) */
+    val encryptedPassword: Rep[String] = column[String]("encrypted_password", O.Length(255,varying=true))
     /** Database column created_at SqlType(timestamptz) */
     val createdAt: Rep[java.sql.Timestamp] = column[java.sql.Timestamp]("created_at")
     /** Database column updated_at SqlType(timestamptz) */

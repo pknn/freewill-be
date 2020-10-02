@@ -9,13 +9,15 @@ import play.api.routing.sird._
 class ApiRouter @Inject() (
   apiController: ApiController,
   versionRouter: VersionRouter,
-  topicRouter: TopicRouter)
+  topicRouter: TopicRouter,
+  userRouter: UserRouter)
     extends SimpleRouter {
   override def routes: Routes =
     versionRouter
       .withPrefix("/version")
       .routes
       .orElse(topicRouter.withPrefix("/topics").routes)
+      .orElse(userRouter.withPrefix("/users").routes)
       .orElse {
         case GET(p"/") => apiController.index
       }
