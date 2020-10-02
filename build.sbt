@@ -18,22 +18,21 @@ libraryDependencies += "com.typesafe.slick" %% "slick-codegen" % "3.3.2"
 libraryDependencies += "org.postgresql" % "postgresql" % "42.2.16"
 libraryDependencies += "com.github.tminglei" %% "slick-pg" % "0.19.2"
 
-lazy val cleanPersist =
-  taskKey[Unit]("Clean Persist Layer generated with generatePersist")
+libraryDependencies += "com.pauldijou" %% "jwt-play-json" % "4.2.0"
+
+lazy val cleanPersist = taskKey[Unit]("Clean Persist Layer generated with generatePersist")
 
 cleanPersist := {
   val dir = (scalaSource in Compile) value
 
-  val directory =
-    new Directory(dir / "persists" / "generated")
+  val directory = new Directory(dir / "persists" / "generated")
 
   directory.deleteRecursively()
 
   println("Persists Layer cleaned.")
 }
 
-lazy val generatePersist =
-  taskKey[Unit]("Generate Persist Layer with slick-codegen")
+lazy val generatePersist = taskKey[Unit]("Generate Persist Layer with slick-codegen")
 
 generatePersist := {
   val slickDriver = "slick.jdbc.PostgresProfile"
@@ -72,7 +71,7 @@ generatePersist := {
       ),
       taskStreams.log
     )
-    .failed foreach (sys error _.getMessage)
+    .failed.foreach(sys error _.getMessage)
   println("Persists Layer Generated")
 }
 

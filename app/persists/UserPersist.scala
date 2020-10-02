@@ -18,7 +18,7 @@ class UserPersist @Inject() (protected val dbConfigProvider: DatabaseConfigProvi
     db.run {
       Users
         .filterOpt(filter.userId)(_.id === _)
-        .filterOpt(filter.userName)(_.username === _)
+        .filterOpt(filter.username)(_.username === _)
         .filterOpt(filter.userEmail)(_.email === _)
         .filter(_.deletedAt.isEmpty)
         .result
@@ -51,6 +51,6 @@ class UserPersist @Inject() (protected val dbConfigProvider: DatabaseConfigProvi
 }
 
 case class UserFilter(
-  userId: Option[String],
-  userName: Option[String],
-  userEmail: Option[String])
+  userId: Option[String] = None,
+  username: Option[String] = None,
+  userEmail: Option[String] = None)

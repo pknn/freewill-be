@@ -3,7 +3,7 @@ package commons
 import java.security.SecureRandom
 import java.util.Base64
 
-import exceptions.AuthenticationIncorrectCredentialException
+import exceptions.{AuthenticationInvalidCredentialException, AuthenticationMalformedPasswordException}
 import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.PBEKeySpec
 
@@ -39,8 +39,9 @@ object Cryptography {
         val salt: Array[Byte] = Base64.getDecoder.decode(base64Salt)
 
         val hashedCheckPassword: Array[Byte] = pbkdf2(password, salt, iteration.toInt)
-        hashedCheckPassword.sameElements(hashedPassword)
-      case _                                                                                 => throw new AuthenticationIncorrectCredentialException
+        if (hashedCheckPassword.sameElements(hashedPassword)) true
+        else throw new AuthenticationInvalidCredentialException
+      case _                                                                                 => throw new AuthenticationMalformedPasswordException
     }
   }
 

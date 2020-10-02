@@ -10,14 +10,14 @@ class ApiRouter @Inject() (
   apiController: ApiController,
   versionRouter: VersionRouter,
   topicRouter: TopicRouter,
-  userRouter: UserRouter)
+  userRouter: UserRouter,
+  authenticationRouter: AuthenticationRouter)
     extends SimpleRouter {
   override def routes: Routes =
-    versionRouter
-      .withPrefix("/version")
-      .routes
+    versionRouter.withPrefix("/version").routes
       .orElse(topicRouter.withPrefix("/topics").routes)
       .orElse(userRouter.withPrefix("/users").routes)
+      .orElse(authenticationRouter.withPrefix("/auth").routes)
       .orElse {
         case GET(p"/") => apiController.index
       }

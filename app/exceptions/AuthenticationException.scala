@@ -14,8 +14,11 @@ sealed abstract class AuthenticationException(
       errorMessageParams
     )
 
-case class AuthenticationIncorrectCredentialException(cause: Throwable = null)
-    extends AuthenticationException(code = "AUTH_INCORRECT_CREDENTIAL", message = "Incorrect Credential", cause = cause)
+case class AuthenticationInvalidCredentialException(cause: Throwable = null)
+    extends AuthenticationException(code = "AUTH_INVALID_CREDENTIAL", message = "Invalid Credential", cause = cause)
+
+case class AuthenticationMalformedPasswordException(cause: Throwable = null)
+    extends AuthenticationException(code = "AUTH_MALFORMED_PASSWORD", message = "Malformed password", cause = cause)
 
 case class AuthenticationInvalidUsernameLengthRequiredException(cause: Throwable = null)
     extends AuthenticationException(
@@ -49,5 +52,18 @@ case class AuthenticationInvalidEmailException(cause: Throwable = null)
     extends AuthenticationException(
       code = "AUTH_INVALID_EMAIL_PATTERN",
       message = "Email address is invalid",
+      cause = cause
+    )
+
+case class AuthenticationUserNotFoundException(cause: Throwable = null)
+    extends AuthenticationException(code = "AUTH_USER_NOT_FOUND", message = "User not found", cause = cause)
+
+case class AuthenticationInvalidAccessTokenException(cause: Throwable = null)
+    extends AuthenticationException(code = "AUTH_INVALID_ACCESS_TOKEN", message = "Invalid Access Token", cause = cause)
+
+case class AuthenticationInvalidRefreshTokenException(cause: Throwable = null)
+    extends AuthenticationException(
+      code = "AUTH_INVALID_REFRESH_TOKEN",
+      message = "Invalid Refresh Token",
       cause = cause
     )

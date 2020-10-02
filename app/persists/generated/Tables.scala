@@ -14,7 +14,7 @@ trait Tables {
   import slick.jdbc.{GetResult => GR}
 
   /** DDL for all tables. Call .create to execute. */
-  lazy val schema: profile.SchemaDescription = PlayEvolutions.schema ++ Topics.schema ++ Users.schema ++ Version.schema
+  lazy val schema: profile.SchemaDescription = PlayEvolutions.schema ++ Tokens.schema ++ Topics.schema ++ Users.schema ++ Version.schema
   @deprecated("Use .schema instead of .ddl", "3.0")
   def ddl = schema
 
@@ -55,6 +55,41 @@ trait Tables {
   }
   /** Collection-like TableQuery object for table PlayEvolutions */
   lazy val PlayEvolutions = new TableQuery(tag => new PlayEvolutions(tag))
+
+  /** Entity class storing rows of table Tokens
+   *  @param id Database column id SqlType(varchar), PrimaryKey, Length(255,true)
+   *  @param userId Database column user_id SqlType(varchar), Length(255,true)
+   *  @param accessToken Database column access_token SqlType(varchar), Length(255,true)
+   *  @param refreshToken Database column refresh_token SqlType(varchar), Length(255,true) */
+  case class TokensRow(id: String, userId: String, accessToken: String, refreshToken: String)
+  /** GetResult implicit for fetching TokensRow objects using plain SQL queries */
+  implicit def GetResultTokensRow(implicit e0: GR[String]): GR[TokensRow] = GR{
+    prs => import prs._
+    TokensRow.tupled((<<[String], <<[String], <<[String], <<[String]))
+  }
+  /** Table description of table tokens. Objects of this class serve as prototypes for rows in queries. */
+  class Tokens(_tableTag: Tag) extends profile.api.Table[TokensRow](_tableTag, "tokens") {
+    def * = (id, userId, accessToken, refreshToken) <> (TokensRow.tupled, TokensRow.unapply)
+    /** Maps whole row to an option. Useful for outer joins. */
+    def ? = ((Rep.Some(id), Rep.Some(userId), Rep.Some(accessToken), Rep.Some(refreshToken))).shaped.<>({r=>import r._; _1.map(_=> TokensRow.tupled((_1.get, _2.get, _3.get, _4.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+
+    /** Database column id SqlType(varchar), PrimaryKey, Length(255,true) */
+    val id: Rep[String] = column[String]("id", O.PrimaryKey, O.Length(255,varying=true))
+    /** Database column user_id SqlType(varchar), Length(255,true) */
+    val userId: Rep[String] = column[String]("user_id", O.Length(255,varying=true))
+    /** Database column access_token SqlType(varchar), Length(255,true) */
+    val accessToken: Rep[String] = column[String]("access_token", O.Length(255,varying=true))
+    /** Database column refresh_token SqlType(varchar), Length(255,true) */
+    val refreshToken: Rep[String] = column[String]("refresh_token", O.Length(255,varying=true))
+
+    /** Foreign key referencing Users (database name tokens_user_id_fkey) */
+    lazy val usersFk = foreignKey("tokens_user_id_fkey", userId, Users)(r => r.id, onUpdate=ForeignKeyAction.NoAction, onDelete=ForeignKeyAction.Cascade)
+
+    /** Uniqueness Index over (userId) (database name tokens_user_id_key) */
+    val index1 = index("tokens_user_id_key", userId, unique=true)
+  }
+  /** Collection-like TableQuery object for table Tokens */
+  lazy val Tokens = new TableQuery(tag => new Tokens(tag))
 
   /** Entity class storing rows of table Topics
    *  @param id Database column id SqlType(varchar), PrimaryKey, Length(50,true)
