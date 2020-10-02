@@ -3,25 +3,27 @@ package models
 import java.sql.Timestamp
 
 import bodies.TopicBody
-import persists.generated.Tables.TopicsRow
+import persists.CompleteTopicRow
 
 case class Topic(
   id: String,
   title: String,
   maybeDescription: Option[String],
   score: Int,
+  maybeUser: Option[User],
   createdAt: Timestamp,
   updatedAt: Timestamp)
 
 object Topic {
-  def apply(topicRow: TopicsRow): Topic =
+  def apply(completeTopicRow: CompleteTopicRow): Topic =
     Topic(
-      id = topicRow.id,
-      title = topicRow.title,
-      maybeDescription = topicRow.description,
-      score = topicRow.score,
-      createdAt = topicRow.createdAt,
-      updatedAt = topicRow.updatedAt
+      id = completeTopicRow.topicsRow.id,
+      title = completeTopicRow.topicsRow.title,
+      maybeDescription = completeTopicRow.topicsRow.description,
+      score = completeTopicRow.topicsRow.score,
+      maybeUser = completeTopicRow.maybeUsersRow.map(User.apply),
+      createdAt = completeTopicRow.topicsRow.createdAt,
+      updatedAt = completeTopicRow.topicsRow.updatedAt
     )
 
 }

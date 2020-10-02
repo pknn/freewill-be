@@ -9,6 +9,7 @@ case class TopicPresenter(
   title: String,
   description: Option[String],
   score: Int,
+  owner: Option[UserPresenter],
   createdAt: String,
   updatedAt: String)
 
@@ -22,6 +23,7 @@ object TopicPresenter {
       title = topic.title,
       description = topic.maybeDescription,
       score = topic.score,
+      owner = topic.maybeUser.map(UserPresenter.apply),
       createdAt = topic.createdAt.toString,
       updatedAt = topic.updatedAt.toString
     )
